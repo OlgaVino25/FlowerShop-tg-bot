@@ -156,8 +156,6 @@ def create_test_json_files():
                 "delivery_time": "14:00",
                 "comment": "Позвонить за 15 минут до прибытия",
                 "status": "доставлен",
-                "notified_florist": True,
-                "notified_courier": True
             },
             "2": {
                 "pk": 2,
@@ -168,8 +166,6 @@ def create_test_json_files():
                 "delivery_time": "18:30",
                 "comment": "",
                 "status": "в обработке",
-                "notified_florist": True,
-                "notified_courier": False
             },
             "3": {
                 "pk": 3,
@@ -180,8 +176,6 @@ def create_test_json_files():
                 "delivery_time": "12:00",
                 "comment": "Консультация с флористом: добавить больше зелени",
                 "status": "консультация",
-                "notified_florist": True,
-                "notified_courier": False
             }
         },
         "consultations.json": {
@@ -195,7 +189,6 @@ def create_test_json_files():
                 "excluded_flowers": [3],
                 "status": "обработан",
                 "created_at": "2024-07-10T14:30:00",
-                "notified_florist": True
             },
             "2": {
                 "pk": 2,
@@ -207,7 +200,6 @@ def create_test_json_files():
                 "excluded_flowers": [],
                 "status": "новый",
                 "created_at": "2024-07-12T10:15:00",
-                "notified_florist": True
             }
         },
         "roles.json": {
