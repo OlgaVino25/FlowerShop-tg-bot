@@ -53,5 +53,60 @@
     "meaning": "Пробуждение природы в одном букете - свежесть и нежность весенних цветов!",
     "flowers": [2, 5, 7],
     "color_scheme": "разноцветный"
+  },
+  {
+    "pk": 6,
+    "title": "Свежесть",
+    "price": 900,
+    "budget_category": "~1000",
+    "image": "static/images/bouquet6.jpg",
+    "occasion": "без повода",
+    "meaning": "Свежий и яркий букет для поднятия настроения в любой день!",
+    "flowers": [2, 4, 7],
+    "color_scheme": "разноцветный"
+  },
+  {
+    "pk": 7,
+    "title": "Изумруд",
+    "price": 3500,
+    "budget_category": "больше",
+    "image": "static/images/bouquet7.jpg",
+    "occasion": "свадьба",
+    "meaning": "Роскошный букет для особенного торжества",
+    "flowers": [1, 3, 6],
+    "color_scheme": "красный"
+  },
+  {
+    "pk": 8,
+    "title": "Вдохновение",
+    "price": 550,
+    "budget_category": "~500",
+    "image": "static/images/bouquet8.jpg",
+    "occasion": "1 сентября",
+    "meaning": "Яркий букет для учителя к началу учебного года",
+    "flowers": [4, 7],
+    "color_scheme": "желтый"
+  },
+  {
+    "pk": 9,
+    "title": "Гармония",
+    "price": 1200,
+    "budget_category": "~1000",
+    "image": "static/images/bouquet9.jpg",
+    "occasion": "день рождения",
+    "meaning": "Сбалансированная композиция, которая подойдет всем",
+    "flowers": [2, 3, 5],
+    "color_scheme": "розовый"
+  },
+  {
+    "pk": 10,
+    "title": "Эксклюзив",
+    "price": 4500,
+    "budget_category": "больше",
+    "image": "static/images/bouquet10.jpg",
+    "occasion": "свадьба",
+    "meaning": "Уникальный букет для самого важного дня",
+    "flowers": [1, 5, 6, 8],
+    "color_scheme": "фиолетовый"
   }
 ]
