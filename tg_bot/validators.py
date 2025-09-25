@@ -1,13 +1,17 @@
 from datetime import datetime
-
+import re
 
 CURRENT_DATE = datetime.now().strftime('%Y-%m-%d')
 CURRENT_TIME = datetime.now().time()
 
 
 def validate_name(name):
-    if not isinstance(name, str) or len(name.strip()) == 0:
+    stripped_name = name.strip()
+    if not stripped_name:
         return False, 'Имя обязательно для заполнения'
+
+    if re.search(r'[^\w\s\-,\.\'"]', stripped_name):
+        return False, 'Недопустимые символы в имени!'
     return True, ''
 
 
@@ -19,8 +23,14 @@ def validate_phone(phone):
 
 
 def validate_address(address):
-    if not isinstance(address, str) or len(address.strip()) == 0:
-        return False, 'Адрес обязателен для заполнения'
+
+    required_words = ["Красноярск", "улица", "дом"]
+    words_in_address = set(word.lower() for word in address.split())
+
+    missing_words = [
+        word for word in required_words if word.lower() not in words_in_address]
+    if missing_words:
+        return False, f"В адресе отсутствуют обязательные слова: {' '.join(missing_words)}"
     return True, ''
 
 
@@ -52,7 +62,8 @@ def validate_delivery_date_and_time(date_str, time_str):
 def main():
     name = input("Ваше имя: ")
     phone = input("Телефон: ")
-    address = input("Адрес доставки: ")
+    address = input(
+        "Адрес доставки (пример: Красноярск, улица. Мира, дом. 10): ")
     delivery_date = input("Дата доставки (ГГГГ-ММ-ДД): ")
     delivery_time = input("Время доставки (ЧЧ:ММ): ")
 
@@ -84,3 +95,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
