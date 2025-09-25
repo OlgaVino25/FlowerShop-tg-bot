@@ -1,24 +1,32 @@
-[
-  {
+{
+  "1": {
     "pk": 1,
     "customer": 2,
     "phone": "+79219876543",
     "occasion": "юбилей",
     "budget": 3000,
-    "preferred_colors": ["красный", "белый"],
-    "excluded_flowers": [3],
+    "preferred_colors": [
+      "красный",
+      "белый"
+    ],
+    "excluded_flowers": [
+      3
+    ],
     "status": "обработан",
     "created_at": "2024-07-10T14:30:00"
   },
-  {
+  "2": {
     "pk": 2,
     "customer": 1,
-    "phone": "+79111234567", 
+    "phone": "+79111234567",
     "occasion": "свадьба",
     "budget": 5000,
-    "preferred_colors": ["белый", "розовый"],
+    "preferred_colors": [
+      "белый",
+      "розовый"
+    ],
     "excluded_flowers": [],
     "status": "новый",
     "created_at": "2024-07-12T10:15:00"
   }
-]
+}

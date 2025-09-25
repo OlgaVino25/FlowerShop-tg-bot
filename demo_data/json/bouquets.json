@@ -1,5 +1,5 @@
-[
-  {
+{
+  "1": {
     "pk": 1,
     "title": "Нежность",
     "price": 2500,
@@ -7,21 +7,29 @@
     "image": "static/images/bouquet1.jpg",
     "occasion": "день рождения",
     "meaning": "Этот букет несет в себе всю нежность ваших чувств и не способен оставить равнодушным ни одного сердца!",
-    "flowers": [1, 2, 3],
+    "flowers": [
+      1,
+      2,
+      3
+    ],
     "color_scheme": "розовый"
   },
-  {
+  "2": {
     "pk": 2,
     "title": "Элегантность",
     "price": 3200,
     "budget_category": "больше",
     "image": "static/images/bouquet2.jpg",
-    "occasion": "свадьба", 
+    "occasion": "свадьба",
     "meaning": "Идеальное сочетание для самого важного дня в вашей жизни - символ чистоты и вечной любви!",
-    "flowers": [3, 6, 8],
+    "flowers": [
+      3,
+      6,
+      8
+    ],
     "color_scheme": "белый"
   },
-  {
+  "3": {
     "pk": 3,
     "title": "Радость",
     "price": 1800,
@@ -29,10 +37,13 @@
     "image": "static/images/bouquet3.jpg",
     "occasion": "без повода",
     "meaning": "Простой способ сказать: 'Я думаю о тебе!' - букет, который дарит улыбку!",
-    "flowers": [4, 7],
+    "flowers": [
+      4,
+      7
+    ],
     "color_scheme": "желтый"
   },
-  {
+  "4": {
     "pk": 4,
     "title": "Романтика",
     "price": 1100,
@@ -40,10 +51,12 @@
     "image": "static/images/bouquet4.jpg",
     "occasion": "14 февраля",
     "meaning": "Классика любви - красные розы, которые говорят о страсти лучше любых слов!",
-    "flowers": [1],
+    "flowers": [
+      1
+    ],
     "color_scheme": "красный"
   },
-  {
+  "5": {
     "pk": 5,
     "title": "Весеннее настроение",
     "price": 700,
@@ -51,10 +64,14 @@
     "image": "static/images/bouquet5.jpg",
     "occasion": "8 марта",
     "meaning": "Пробуждение природы в одном букете - свежесть и нежность весенних цветов!",
-    "flowers": [2, 5, 7],
+    "flowers": [
+      2,
+      5,
+      7
+    ],
     "color_scheme": "разноцветный"
   },
-  {
+  "6": {
     "pk": 6,
     "title": "Свежесть",
     "price": 900,
@@ -62,10 +79,14 @@
     "image": "static/images/bouquet6.jpg",
     "occasion": "без повода",
     "meaning": "Свежий и яркий букет для поднятия настроения в любой день!",
-    "flowers": [2, 4, 7],
+    "flowers": [
+      2,
+      4,
+      7
+    ],
     "color_scheme": "разноцветный"
   },
-  {
+  "7": {
     "pk": 7,
     "title": "Изумруд",
     "price": 3500,
@@ -73,10 +94,14 @@
     "image": "static/images/bouquet7.jpg",
     "occasion": "свадьба",
     "meaning": "Роскошный букет для особенного торжества",
-    "flowers": [1, 3, 6],
+    "flowers": [
+      1,
+      3,
+      6
+    ],
     "color_scheme": "красный"
   },
-  {
+  "8": {
     "pk": 8,
     "title": "Вдохновение",
     "price": 550,
@@ -84,10 +109,13 @@
     "image": "static/images/bouquet8.jpg",
     "occasion": "1 сентября",
     "meaning": "Яркий букет для учителя к началу учебного года",
-    "flowers": [4, 7],
+    "flowers": [
+      4,
+      7
+    ],
     "color_scheme": "желтый"
   },
-  {
+  "9": {
     "pk": 9,
     "title": "Гармония",
     "price": 1200,
@@ -95,10 +123,14 @@
     "image": "static/images/bouquet9.jpg",
     "occasion": "день рождения",
     "meaning": "Сбалансированная композиция, которая подойдет всем",
-    "flowers": [2, 3, 5],
+    "flowers": [
+      2,
+      3,
+      5
+    ],
     "color_scheme": "розовый"
   },
-  {
+  "10": {
     "pk": 10,
     "title": "Эксклюзив",
     "price": 4500,
@@ -106,7 +138,12 @@
     "image": "static/images/bouquet10.jpg",
     "occasion": "свадьба",
     "meaning": "Уникальный букет для самого важного дня",
-    "flowers": [1, 5, 6, 8],
+    "flowers": [
+      1,
+      5,
+      6,
+      8
+    ],
     "color_scheme": "фиолетовый"
   }
-]
+}

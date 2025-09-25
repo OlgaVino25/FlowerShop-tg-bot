@@ -65,7 +65,6 @@ def find_user(tg_id: int) -> models.User | None:
         return parse_user(user)
     return None
 
-
 def get_user(pk: int) -> User | None:
     """Получает пользователя по первичному ключу."""
     user = find_value_in_dict(pk, USERS)
@@ -437,3 +436,5 @@ def update_consultation_status(consultation_pk: int, status: str):
         save_readable_json(consultations, CONSULTATIONS)
         return True
     return False
+
+
