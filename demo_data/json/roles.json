@@ -1,5 +1,14 @@
-[
-  {"pk": 1, "title": "customer"},
-  {"pk": 2, "title": "manager"},
-  {"pk": 3, "title": "courier"}
-]
+{
+  "1": {
+    "pk": 1,
+    "title": "customer"
+  },
+  "2": {
+    "pk": 2,
+    "title": "manager"
+  },
+  "3": {
+    "pk": 3,
+    "title": "courier"
+  }
+}
