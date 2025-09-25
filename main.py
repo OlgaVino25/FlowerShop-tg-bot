@@ -1,0 +1,12 @@
+import os
+import sys
+from pathlib import Path
+
+# Добавляем корневую директорию в путь Python
+current_dir = Path(__file__).parent
+sys.path.append(str(current_dir))
+
+from tg_bot.bot import main
+
+if __name__ == "__main__":
+    main()
