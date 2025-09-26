@@ -1,11 +1,12 @@
 import os
 import sys
 import telebot
+from pathlib import Path
 from dotenv import load_dotenv
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(current_dir))
-sys.path.append(project_root)
+current_dir = Path(__file__).parent
+project_root = current_dir.parent
+sys.path.append(str(project_root))
 
 from tg_bot.start import setup_start_handlers
 from tg_bot.bouquets import setup_bouquet_handlers

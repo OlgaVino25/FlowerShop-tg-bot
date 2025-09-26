@@ -1,10 +1,11 @@
 import sys
 import os
 from telebot import types
+from pathlib import Path
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(current_dir))
-sys.path.append(project_root)
+current_dir = Path(__file__).parent
+project_root = current_dir.parent
+sys.path.append(str(project_root))
 
 from demo_data.demo_db import get_bouquets, get_flower, get_flowers
 from tg_bot.keyboards import create_bouquet_navigation
