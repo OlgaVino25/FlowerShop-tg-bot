@@ -1,26 +1,21 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
+
 
 @dataclass
 class UserState:
-    occasion = None
-    budget = None
-    color_scheme = None
-    excluded_flowers: List[int] = None
+    occasion: str = None
+    budget: str = None
+    color_scheme: str = None
+    excluded_flowers: List[int] = field(default_factory=list)
     current_bouquet_index: int = 0
-    filtered_bouquets: List = None
-    phone = None
-    order_address = None
-    delivery_date = None
-    delivery_time = None
+    filtered_bouquets: List = field(default_factory=list)
+    phone: str = None
+    order_address: str = None
+    delivery_date: str = None
+    delivery_time: str = None
     comment: str = ""
     waiting_custom_occasion: bool = False
     consultation_mode: bool = False
     order_bouquet_pk: int = None
     custom_occasion: str = None
-    
-    def __post_init__(self):
-        if self.excluded_flowers is None:
-            self.excluded_flowers = []
-        if self.filtered_bouquets is None:
-            self.filtered_bouquets = []
