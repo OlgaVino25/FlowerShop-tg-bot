@@ -18,6 +18,29 @@ def setup_navigation_handlers(bot, user_data):
         show_bouquet(bot, call.message, index, user_data)
         bot.answer_callback_query(call.id)
 
+    # Обработчик для кнопки "Показать всю коллекцию"
+    @bot.callback_query_handler(func=lambda call: call.data == "all_collection")
+    def handle_all_collection(call):
+        user_id = call.message.chat.id
+        if user_id not in user_data:
+            user_data[user_id] = UserState()
+
+        user_data[user_id].occasion = "не важно"
+        user_data[user_id].budget = "не важно"
+        user_data[user_id].color_scheme = None
+        user_data[user_id].excluded_flowers = []
+
+        from demo_data.demo_db import get_bouquets
+        user_data[user_id].filtered_bouquets = get_bouquets()
+        user_data[user_id].current_bouquet_index = 0
+
+        if user_data[user_id].filtered_bouquets:
+            from tg_bot.bouquets import show_bouquet
+            show_bouquet(bot, call.message, 0, user_data)
+        else:
+            bot.send_message(call.message.chat.id, "😔 *В коллекции пока нет букетов.*", parse_mode="Markdown")
+        bot.answer_callback_query(call.id)
+
     @bot.callback_query_handler(func=lambda call: call.data == "all_collection")
     def handle_all_collection(call):
         user_id = call.message.chat.id

@@ -143,6 +143,39 @@ def show_filtered_bouquets(bot, message, user_data):
 
 def setup_bouquet_handlers(bot, user_data):
 
+    @bot.message_handler(func=lambda message: message.text == "💐 Показать всю коллекцию")
+    def handle_show_all_collection(message):
+        user_id = message.chat.id
+        if user_id not in user_data:
+            user_data[user_id] = UserState()
+
+        # Фильтры для показа всей коллекции
+        user_data[user_id].occasion = "не важно"
+        user_data[user_id].budget = "не важно"
+        user_data[user_id].color_scheme = None
+        user_data[user_id].excluded_flowers = []
+
+        all_bouquets = get_bouquets()
+        user_data[user_id].filtered_bouquets = all_bouquets
+        user_data[user_id].current_bouquet_index = 0
+
+        if not all_bouquets:
+            bot.send_message(
+                message.chat.id,
+                "😔 *В коллекции пока нет букетов.*",
+                parse_mode="Markdown",
+            )
+            return
+
+        markup = types.ReplyKeyboardRemove()
+        bot.send_message(
+            message.chat.id,
+            "🌸 *Показываю всю коллекцию букетов...*",
+            reply_markup=markup,
+            parse_mode="Markdown",
+        )
+        show_bouquet(bot, message, 0, user_data)
+
     @bot.message_handler(func=lambda message: occasion_filter(message))
     def handle_occasion(message):
         user_id = message.chat.id

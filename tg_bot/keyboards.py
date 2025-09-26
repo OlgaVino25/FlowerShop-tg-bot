@@ -4,6 +4,7 @@ import demo_data.demo_db as db
 
 def create_occasion_keyboard():
     markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    markup.add(types.KeyboardButton("💐 Показать всю коллекцию"))
     occasions = get_occasions()
     for occasion in occasions:
         markup.add(types.KeyboardButton(occasion.title))
