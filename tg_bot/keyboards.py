@@ -25,7 +25,7 @@ def create_color_scheme_keyboard():
     color_schemes = get_color_schemes()
     for scheme in color_schemes:
         markup.add(types.KeyboardButton(scheme.title))
-    markup.add(types.KeyboardButton("не важно"))
+    markup.add(types.KeyboardButton("любая"))
     return markup
 
 

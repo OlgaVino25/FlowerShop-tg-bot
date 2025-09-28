@@ -14,12 +14,17 @@ def occasion_filter(message):
 
 def budget_filter(message):
     budgets = ["~500", "~1000", "~2000", "больше", "не важно"]
-    return message.text in budgets
+    budgets_lower = [b.lower() for b in budgets]
+    result = message.text.lower() in budgets_lower
+    print(f"budget_filter: {message.text} -> {result}")
+    return result
 
 
 def color_scheme_filter(message):
     schemes = [scheme.title for scheme in get_color_schemes()]
-    schemes.append("не важно")
+    schemes.append("любая")
+    # schemes.append("Не важно")
+    # schemes.extend(["неважно", "Неважно", "НЕ ВАЖНО", "НЕВАЖНО"])
     return message.text in schemes
 
 

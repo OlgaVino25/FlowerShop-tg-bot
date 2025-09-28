@@ -77,7 +77,6 @@ def show_filtered_bouquets(bot, message, user_data):
     user_id = message.chat.id
     if user_id not in user_data:
         from tg_bot.start import send_welcome
-
         send_welcome(bot, message, user_data)
         return
 
@@ -98,7 +97,7 @@ def show_filtered_bouquets(bot, message, user_data):
             if bouquet.occasion != occasion:
                 matches = False
 
-        # Фильтр по бюджету
+        # Фильтр по бюджету (исправлено)
         if matches and budget != "не важно":
             if budget == "больше":
                 if bouquet.price <= 2000:
@@ -114,8 +113,12 @@ def show_filtered_bouquets(bot, message, user_data):
                     if not (min_price <= bouquet.price <= max_price):
                         matches = False
 
-        # Фильтр по цветовой гамме (только если указана конкретная гамма)
-        if matches and color_scheme and color_scheme != "не важно":
+        # Фильтр по цветовой гамме
+        if (
+            matches
+            and color_scheme
+            and color_scheme.lower() not in ["любая"]
+        ):
             if bouquet.color_scheme != color_scheme:
                 matches = False
 
@@ -167,6 +170,7 @@ def setup_bouquet_handlers(bot, user_data):
         user_data[user_id].occasion = "не важно"
         user_data[user_id].budget = "не важно"
         user_data[user_id].color_scheme = None
+        user_data[user_id].color_scheme_set = False
         user_data[user_id].excluded_flowers = []
 
         all_bouquets = get_bouquets()
@@ -197,35 +201,11 @@ def setup_bouquet_handlers(bot, user_data):
             user_data[user_id] = UserState()
 
         user_data[user_id].occasion = message.text
-
-        from tg_bot.keyboards import create_budget_keyboard
-
-        markup = create_budget_keyboard()
-
-        bot.send_message(
-            message.chat.id,
-            "💵 *На какую сумму рассчитываете?*",
-            reply_markup=markup,
-            parse_mode="Markdown",
-        )
-
-    @bot.message_handler(func=lambda message: budget_filter(message))
-    def handle_budget(message):
-        user_id = message.chat.id
-        if user_id not in user_data:
-            from tg_bot.start import send_welcome
-
-            send_welcome(bot, message, user_data)
-            return
-
-        # Проверяем, что бюджет еще не установлен
-        if (
-            hasattr(user_data[user_id], "budget")
-            and user_data[user_id].budget is not None
-        ):
-            return
-
-        user_data[user_id].budget = message.text
+        # Сбрасываем предыдущие выборы для нового поиска
+        user_data[user_id].budget = None
+        user_data[user_id].color_scheme = None
+        user_data[user_id].color_scheme_set = False
+        user_data[user_id].excluded_flowers = []
 
         from tg_bot.keyboards import create_color_scheme_keyboard
 
@@ -238,6 +218,7 @@ def setup_bouquet_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
+    # Обработчик цветовой схемы
     @bot.message_handler(func=lambda message: color_scheme_filter(message))
     def handle_color_scheme(message):
         user_id = message.chat.id
@@ -249,44 +230,41 @@ def setup_bouquet_handlers(bot, user_data):
 
         # Проверяем, что цветовая гамма еще не установлена
         if (
-            hasattr(user_data[user_id], "color_scheme")
-            and user_data[user_id].color_scheme is not None
+            hasattr(user_data[user_id], "color_scheme_set")
+            and user_data[user_id].color_scheme_set
         ):
             return
 
         print(f"Обработка цветовой схемы: {message.text}")
 
-        # Устанавливаем цветовую схему
+        # Устанавливаем цветовую схему и флаг завершения
         user_data[user_id].color_scheme = message.text
+        user_data[user_id].color_scheme_set = True
 
-        print(f"Установлена цветовая схема: {user_data[user_id].color_scheme}")
+        # Если выбрано "не важно", сбрасываем цветовую схему
+        if message.text.lower() in ["любая"]:
+            user_data[user_id].color_scheme = None
 
-        # Если выбрано "не важно", сразу переходим к показу букетов
-        if message.text == "не важно":
-            # Убедимся, что excluded_flowers инициализирован
-            if (
-                not hasattr(user_data[user_id], "excluded_flowers")
-                or user_data[user_id].excluded_flowers is None
-            ):
-                user_data[user_id].excluded_flowers = []
+        # Убедимся, что excluded_flowers инициализирован
+        if (
+            not hasattr(user_data[user_id], "excluded_flowers")
+            or user_data[user_id].excluded_flowers is None
+        ):
+            user_data[user_id].excluded_flowers = []
 
-            show_filtered_bouquets(bot, message, user_data)
-        else:
-            # Если выбрана конкретная цветовая гамма, переходим к исключению цветов
-            from tg_bot.keyboards import create_flowers_exclusion_keyboard
+        # Переходим к исключению цветов
+        from tg_bot.keyboards import create_flowers_exclusion_keyboard
 
-            markup = create_flowers_exclusion_keyboard(
-                user_data[user_id].excluded_flowers
-            )
-
-            bot.send_message(
-                message.chat.id,
-                "❌ *Выберите цветы, которые не хотите видеть в букете:*\n\n"
-                "Нажмите на цветок, чтобы исключить его из поиска. "
-                "Нажмите еще раз, чтобы вернуть.",
-                reply_markup=markup,
-                parse_mode="Markdown",
-            )
+        markup = create_flowers_exclusion_keyboard(user_data[user_id].excluded_flowers)
+        bot.send_message(
+            message.chat.id,
+            "❌ *Выберите цветы, которые НЕ хотите видеть в букете:*\n\n"
+            "Нажмите на цветок, чтобы исключить его из поиска. "
+            "Нажмите еще раз, чтобы вернуть.\n\n"
+            "Нажмите *✅ Завершить выбор*, когда закончите.",
+            reply_markup=markup,
+            parse_mode="Markdown",
+        )
 
     @bot.message_handler(func=lambda message: flower_exclusion_filter(message))
     def handle_flower_exclusion(message):
@@ -297,34 +275,37 @@ def setup_bouquet_handlers(bot, user_data):
             send_welcome(bot, message, user_data)
             return
 
-        flower_name = message.text[2:]
+        flower_name = message.text[2:]  # Убираем эмодзи
         flowers = get_flowers()
 
+        flower_found = False
         for flower in flowers:
             if flower.title == flower_name:
+                flower_found = True
                 if message.text.startswith("❌"):
                     # Исключаем цветок
                     if flower.pk not in user_data[user_id].excluded_flowers:
                         user_data[user_id].excluded_flowers.append(flower.pk)
-                        bot.send_message(
-                            message.chat.id, f"✅ {flower_name} исключен из поиска"
-                        )
+                        status_msg = f"❌ {flower_name} исключен из поиска"
                 else:
                     # Возвращаем цветок
                     if flower.pk in user_data[user_id].excluded_flowers:
                         user_data[user_id].excluded_flowers.remove(flower.pk)
-                        bot.send_message(
-                            message.chat.id, f"✅ {flower_name} возвращен в поиск"
-                        )
+                        status_msg = f"✅ {flower_name} возвращен в поиск"
                 break
+
+        if not flower_found:
+            return
 
         # Обновляем клавиатуру
         from tg_bot.keyboards import create_flowers_exclusion_keyboard
 
         markup = create_flowers_exclusion_keyboard(user_data[user_id].excluded_flowers)
+
+        # Отправляем только статус изменения и обновляем клавиатуру
         bot.send_message(
             message.chat.id,
-            "Продолжайте выбирать цветы для исключения:",
+            status_msg,
             reply_markup=markup,
         )
 
@@ -333,10 +314,40 @@ def setup_bouquet_handlers(bot, user_data):
         user_id = message.chat.id
         if user_id not in user_data:
             from tg_bot.start import send_welcome
-
             send_welcome(bot, message, user_data)
             return
 
+        from tg_bot.keyboards import create_budget_keyboard
+
+        markup = create_budget_keyboard()
+
+        bot.send_message(
+            message.chat.id,
+            "💵 *На какую сумму рассчитываете?*",
+            reply_markup=markup,
+            parse_mode="Markdown",
+        )
+
+    # ОБРАБОТЧИК БЮДЖЕТА - ДОЛЖЕН БЫТЬ ПОСЛЕ ВСЕХ ОСТАЛЬНЫХ ОБРАБОТЧИКОВ
+    @bot.message_handler(func=lambda message: budget_filter(message))
+    def handle_budget(message):
+        user_id = message.chat.id
+        if user_id not in user_data:
+            from tg_bot.start import send_welcome
+            send_welcome(bot, message, user_data)
+            return
+
+        # Устанавливаем бюджет
+        user_data[user_id].budget = message.text
+        print(f"Установлен бюджет: {user_data[user_id].budget}")
+
+        # Если выбран "не важно", сразу показываем букеты
+        if message.text.lower() in ["не важно"]:
+            user_data[user_id].budget = "не важно"
+            show_filtered_bouquets(bot, message, user_data)
+            return
+
+        # Показываем отфильтрованные букеты
         show_filtered_bouquets(bot, message, user_data)
 
     @bot.message_handler(func=lambda message: message.text == "💐 Посмотреть букеты")
