@@ -329,7 +329,7 @@ def create_test_json_files():
             "2": {
                 "pk": 2,
                 "tg_id": 987654321,
-                "full_name": "Мария Петрова",
+                "full_name": "Мария",
                 "role": 1,
                 "address": "пр. Ленина, д. 42",
                 "phone": "+79219876543"
@@ -337,7 +337,7 @@ def create_test_json_files():
             "3": {
                 "pk": 3,
                 "tg_id": 555555555,
-                "full_name": "Анна Флористова",
+                "full_name": "Анна",
                 "role": 2,
                 "address": "ул. Цветочная, д. 5",
                 "phone": "+79105555555"
