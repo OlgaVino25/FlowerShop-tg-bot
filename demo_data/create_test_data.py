@@ -87,7 +87,7 @@ def create_test_json_files():
             "7": {
                 "pk": 7,
                 "title": "Изумруд",
-                "price": 3500,
+                "price": 1500,
                 "budget_category": "больше",
                 "image": "static/images/bouquet7.jpg",
                 "occasion": "свадьба",
@@ -109,7 +109,7 @@ def create_test_json_files():
             "9": {
                 "pk": 9,
                 "title": "Гармония",
-                "price": 1200,
+                "price": 1000,
                 "budget_category": "~1000",
                 "image": "static/images/bouquet9.jpg",
                 "occasion": "день рождения",
@@ -120,7 +120,7 @@ def create_test_json_files():
             "10": {
                 "pk": 10,
                 "title": "Эксклюзив",
-                "price": 4500,
+                "price": 2200,
                 "budget_category": "больше",
                 "image": "static/images/bouquet10.jpg",
                 "occasion": "свадьба",
@@ -186,7 +186,7 @@ def create_test_json_files():
             "16": {
                 "pk": 16,
                 "title": "Зимняя сказка",
-                "price": 3200,
+                "price": 480,
                 "budget_category": "больше",
                 "image": "static/images/bouquet16.jpg",
                 "occasion": "день рождения",
@@ -208,7 +208,7 @@ def create_test_json_files():
             "18": {
                 "pk": 18,
                 "title": "Романтический вечер",
-                "price": 1800,
+                "price": 800,
                 "budget_category": "~2000",
                 "image": "static/images/bouquet18.jpg",
                 "occasion": "свадьба",
@@ -230,7 +230,7 @@ def create_test_json_files():
             "20": {
                 "pk": 20,
                 "title": "Элегантная простота",
-                "price": 2200,
+                "price": 1900,
                 "budget_category": "~2000",
                 "image": "static/images/bouquet20.jpg",
                 "occasion": "день рождения",
