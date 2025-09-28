@@ -16,7 +16,6 @@ def budget_filter(message):
     budgets = ["~500", "~1000", "~2000", "больше", "не важно"]
     budgets_lower = [b.lower() for b in budgets]
     result = message.text.lower() in budgets_lower
-    print(f"budget_filter: {message.text} -> {result}")
     return result
 
 
