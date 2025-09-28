@@ -20,3 +20,14 @@ class UserState:
     consultation_mode: bool = False
     order_bouquet_pk: int = None
     custom_occasion: str = None
+    order_name: str = None
+    waiting_order_name: bool = False
+    waiting_phone: bool = False
+    waiting_phone: bool = False
+    order_name: str = None
+    phone: str = None
+    order_address: str = None
+    delivery_date: str = None
+    delivery_time: str = None
+    comment: str = ""
+    order_bouquet_pk: int = None

@@ -2,12 +2,18 @@ from telebot import types
 from demo_data.demo_db import add_consultation, find_user
 from tg_bot.keyboards import create_phone_keyboard
 from tg_bot.filters import contact_filter
+from tg_bot.validators import validate_name, validate_phone, validate_address, validate_delivery_date_and_time
 import demo_data.demo_db as db
 
 
 def handle_consultation_contact(bot, message, user_data):
     user_id = message.chat.id
     phone = message.contact.phone_number
+
+    is_valid, error_msg = validate_phone(phone)
+    if not is_valid:
+        bot.send_message(message.chat.id, f"❌ {error_msg}")
+        return
     
     consultation_data = add_consultation(
         customer=user_id,

@@ -1,7 +1,14 @@
 import os
 import sys
 import telebot
+from telebot import types
 from pathlib import Path
+from tg_bot.validators import (
+    validate_name,
+    validate_phone,
+    validate_address,
+    validate_delivery_date_and_time,
+)
 from dotenv import load_dotenv
 
 current_dir = Path(__file__).parent
@@ -28,27 +35,28 @@ def main():
     setup_navigation_handlers(bot, user_data)
     setup_bouquet_handlers(bot, user_data)
 
-    # Обработчик для кастомного ввода повода
-    @bot.message_handler(
-        func=lambda message: user_data.get(message.chat.id)
-        and getattr(user_data[message.chat.id], "waiting_custom_occasion", False)
-    )
-    def handle_custom_occasion_fallback(message):
-        from tg_bot.start import handle_custom_occasion
-        handle_custom_occasion(bot, message, user_data)
-
-    # Обработчик для любых текстовых сообщений (fallback)
     @bot.message_handler(func=lambda message: True)
     def handle_all_messages(message):
         user_id = message.chat.id
 
-        # Если пользователь не найден, отправляем приветствие
         if user_id not in user_data:
             from tg_bot.start import send_welcome
             send_welcome(bot, message, user_data)
             return
 
-        # Если сообщение не обработано другими обработчиками, показываем приветствие
+        # Если есть активный заказ и ждем имя
+        if getattr(user_data[user_id], "waiting_order_name", False):
+            from tg_bot.order import handle_order_name
+            handle_order_name(message)
+            return
+
+        # Если есть активный заказ и ждем телефон
+        if (getattr(user_data[user_id], "waiting_phone", False) and 
+            not getattr(user_data[user_id], "consultation_mode", False)):
+            from tg_bot.order import handle_manual_phone_input_message
+            handle_manual_phone_input_message(bot, message, user_data)
+            return
+
         print(f"Необработанное сообщение: {message.text}")
         from tg_bot.start import send_welcome
         send_welcome(bot, message, user_data)

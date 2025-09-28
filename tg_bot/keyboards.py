@@ -1,5 +1,6 @@
 from telebot import types
 from demo_data.demo_db import get_occasions, get_color_schemes, get_flowers
+from tg_bot.validators import validate_name, validate_phone, validate_address, validate_delivery_date_and_time
 import demo_data.demo_db as db
 
 
@@ -53,6 +54,7 @@ def create_flowers_exclusion_keyboard(excluded_flowers):
 def create_phone_keyboard():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton("📱 Отправить мой номер", request_contact=True))
+    markup.add(types.KeyboardButton("📝 Ввести номер вручную"))
     markup.add(types.KeyboardButton("↩️ Назад к выбору"))
     return markup
 

@@ -41,6 +41,16 @@ def contact_filter(message):
 
 
 # Фильтры для заказов
+def name_filter(message, user_data):
+    user_id = message.chat.id
+    return (
+        user_id in user_data
+        and hasattr(user_data[user_id], "order_bouquet_pk")
+        and not hasattr(user_data[user_id], "order_name")
+        and getattr(user_data[user_id], "waiting_order_name", False)
+    )
+
+
 def address_filter(message, user_data):
     user_id = message.chat.id
     return (
