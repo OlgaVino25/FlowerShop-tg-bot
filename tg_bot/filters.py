@@ -23,8 +23,6 @@ def budget_filter(message):
 def color_scheme_filter(message):
     schemes = [scheme.title for scheme in get_color_schemes()]
     schemes.append("любая")
-    # schemes.append("Не важно")
-    # schemes.extend(["неважно", "Неважно", "НЕ ВАЖНО", "НЕВАЖНО"])
     return message.text in schemes
 
 
