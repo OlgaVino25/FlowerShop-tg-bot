@@ -83,7 +83,6 @@ def show_filtered_bouquets(bot, message, user_data):
     all_bouquets = get_bouquets()
     filtered = []
 
-    # Безопасно получаем атрибуты с значениями по умолчанию
     occasion = getattr(user_data[user_id], "occasion", "не важно")
     budget = getattr(user_data[user_id], "budget", "не важно")
     color_scheme = getattr(user_data[user_id], "color_scheme", None)
@@ -97,7 +96,7 @@ def show_filtered_bouquets(bot, message, user_data):
             if bouquet.occasion != occasion:
                 matches = False
 
-        # Фильтр по бюджету (исправлено)
+        # Фильтр по бюджету
         if matches and budget != "не важно":
             if budget == "больше":
                 if bouquet.price <= 2000:
@@ -218,7 +217,7 @@ def setup_bouquet_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    # Обработчик цветовой схемы
+    # Обработчик цветовой гаммы
     @bot.message_handler(func=lambda message: color_scheme_filter(message))
     def handle_color_scheme(message):
         user_id = message.chat.id
@@ -237,11 +236,11 @@ def setup_bouquet_handlers(bot, user_data):
 
         print(f"Обработка цветовой схемы: {message.text}")
 
-        # Устанавливаем цветовую схему и флаг завершения
+        # Устанавливаем цветовую гамму и флаг завершения
         user_data[user_id].color_scheme = message.text
         user_data[user_id].color_scheme_set = True
 
-        # Если выбрано "не важно", сбрасываем цветовую схему
+        # Если выбрано "не важно", сбрасываем цветовую гамму
         if message.text.lower() in ["любая"]:
             user_data[user_id].color_scheme = None
 
@@ -275,7 +274,7 @@ def setup_bouquet_handlers(bot, user_data):
             send_welcome(bot, message, user_data)
             return
 
-        flower_name = message.text[2:]  # Убираем эмодзи
+        flower_name = message.text[2:]
         flowers = get_flowers()
 
         flower_found = False
@@ -328,7 +327,6 @@ def setup_bouquet_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    # ОБРАБОТЧИК БЮДЖЕТА - ДОЛЖЕН БЫТЬ ПОСЛЕ ВСЕХ ОСТАЛЬНЫХ ОБРАБОТЧИКОВ
     @bot.message_handler(func=lambda message: budget_filter(message))
     def handle_budget(message):
         user_id = message.chat.id

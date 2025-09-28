@@ -22,12 +22,10 @@ user_data = {}
 
 
 def main():
-    # Регистрация всех обработчиков в правильном порядке
     setup_start_handlers(bot, user_data)
     setup_consultation_handlers(bot, user_data)
     setup_order_handlers(bot, user_data)
     setup_navigation_handlers(bot, user_data)
-    # Обработчики букетов должны быть последними, чтобы не перехватывать сообщения
     setup_bouquet_handlers(bot, user_data)
 
     # Обработчик для кастомного ввода повода

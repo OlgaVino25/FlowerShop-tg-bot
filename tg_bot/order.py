@@ -6,8 +6,8 @@ from telebot import types
 from datetime import datetime, timedelta
 from demo_data.demo_db import add_order
 from tg_bot.keyboards import create_phone_keyboard, create_date_keyboard, create_time_keyboard, create_comment_keyboard
-from tg_bot.filters import contact_filter, address_filter, date_filter, time_filter, comment_filter  # Добавлены все фильтры
-from tg_bot.validators import validate_address, validate_delivery_date_and_time  # Добавлены валидаторы
+from tg_bot.filters import contact_filter, address_filter, date_filter, time_filter, comment_filter
+from tg_bot.validators import validate_address, validate_delivery_date_and_time 
 import demo_data.demo_db as db
 
 def setup_order_handlers(bot, user_data):
