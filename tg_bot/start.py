@@ -1,7 +1,8 @@
 from telebot import types
 from demo_data.demo_db import find_user, add_user, get_occasions
-from tg_bot.keyboards import create_occasion_keyboard
+from tg_bot.keyboards import create_occasion_keyboard, create_color_scheme_keyboard
 from tg_bot.states import UserState
+
 
 def send_welcome(bot, message, user_data):
     user_id = message.chat.id
@@ -25,6 +26,7 @@ def send_welcome(bot, message, user_data):
         parse_mode="Markdown",
     )
 
+
 def handle_other_occasion(bot, message, user_data):
     user_id = message.chat.id
     if user_id not in user_data:
@@ -40,6 +42,7 @@ def handle_other_occasion(bot, message, user_data):
     )
     user_data[user_id].waiting_custom_occasion = True
 
+
 def handle_custom_occasion(bot, message, user_data):
     user_id = message.chat.id
     custom_occasion = message.text.strip()
@@ -47,15 +50,21 @@ def handle_custom_occasion(bot, message, user_data):
     user_data[user_id].custom_occasion = custom_occasion
     user_data[user_id].occasion = "другой повод"
 
-    from tg_bot.keyboards import create_budget_keyboard
-    markup = create_budget_keyboard()
+    # Сбрасываем предыдущие выборы для нового поиска
+    user_data[user_id].budget = None
+    user_data[user_id].color_scheme = None
+    user_data[user_id].color_scheme_set = False
+    user_data[user_id].excluded_flowers = []
+
+    markup = create_color_scheme_keyboard()
 
     bot.send_message(
         message.chat.id,
-        "💵 *На какую сумму рассчитываете?*",
+        "🎨 *Выберите цветовую гамму:*",
         reply_markup=markup,
         parse_mode="Markdown",
     )
+
 
 def setup_start_handlers(bot, user_data):
     @bot.message_handler(commands=["start"])
@@ -65,3 +74,10 @@ def setup_start_handlers(bot, user_data):
     @bot.message_handler(func=lambda message: message.text == "другой повод")
     def other_occasion_handler(message):
         handle_other_occasion(bot, message, user_data)
+
+    # Обработчик для ввода кастомного повода
+    @bot.message_handler(func=lambda message: 
+                      user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'waiting_custom_occasion', False))
+    def custom_occasion_input_handler(message):
+        handle_custom_occasion(bot, message, user_data)

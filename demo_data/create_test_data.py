@@ -8,14 +8,14 @@ def create_test_json_files():
     
     test_data = {
         "flowers.json": {
-            "1": {"pk": 1, "title": "Розы", "color": "красный", "price": 150},
-            "2": {"pk": 2, "title": "Тюльпаны", "color": "розовый", "price": 80},
-            "3": {"pk": 3, "title": "Лилии", "color": "белый", "price": 120},
-            "4": {"pk": 4, "title": "Хризантемы", "color": "желтый", "price": 70},
-            "5": {"pk": 5, "title": "Пионы", "color": "розовый", "price": 200},
-            "6": {"pk": 6, "title": "Орхидеи", "color": "фиолетовый", "price": 250},
-            "7": {"pk": 7, "title": "Герберы", "color": "оранжевый", "price": 90},
-            "8": {"pk": 8, "title": "Ирисы", "color": "синий", "price": 85}
+            "1": {"pk": 1, "title": "Розы", "color": "красный"},
+            "2": {"pk": 2, "title": "Тюльпаны", "color": "розовый"},
+            "3": {"pk": 3, "title": "Лилии", "color": "белый"},
+            "4": {"pk": 4, "title": "Хризантемы", "color": "желтый"},
+            "5": {"pk": 5, "title": "Пионы", "color": "розовый"},
+            "6": {"pk": 6, "title": "Орхидеи", "color": "фиолетовый"},
+            "7": {"pk": 7, "title": "Герберы", "color": "оранжевый"},
+            "8": {"pk": 8, "title": "Ирисы", "color": "синий"}
         },
         "bouquets.json": {
             "1": {
@@ -87,7 +87,7 @@ def create_test_json_files():
             "7": {
                 "pk": 7,
                 "title": "Изумруд",
-                "price": 3500,
+                "price": 1500,
                 "budget_category": "больше",
                 "image": "static/images/bouquet7.jpg",
                 "occasion": "свадьба",
@@ -109,7 +109,7 @@ def create_test_json_files():
             "9": {
                 "pk": 9,
                 "title": "Гармония",
-                "price": 1200,
+                "price": 1000,
                 "budget_category": "~1000",
                 "image": "static/images/bouquet9.jpg",
                 "occasion": "день рождения",
@@ -120,13 +120,123 @@ def create_test_json_files():
             "10": {
                 "pk": 10,
                 "title": "Эксклюзив",
-                "price": 4500,
+                "price": 2200,
                 "budget_category": "больше",
                 "image": "static/images/bouquet10.jpg",
                 "occasion": "свадьба",
                 "meaning": "Уникальный букет для самого важного дня",
                 "flowers": [1, 5, 6, 8],
                 "color_scheme": "фиолетовый"
+            },
+            "11": {
+                "pk": 11,
+                "title": "Летняя свежесть",
+                "price": 850,
+                "budget_category": "~1000",
+                "image": "static/images/bouquet11.jpg",
+                "occasion": "без повода",
+                "meaning": "Освежающий букет для жаркого летнего дня",
+                "flowers": [2, 4, 7],
+                "color_scheme": "разноцветный"
+            },
+            "12": {
+                "pk": 12,
+                "title": "Королевский прием",
+                "price": 4800,
+                "budget_category": "больше",
+                "image": "static/images/bouquet12.jpg",
+                "occasion": "день рождения",
+                "meaning": "Роскошный букет для особого торжества",
+                "flowers": [1, 3, 6, 8],
+                "color_scheme": "фиолетовый"
+            },
+            "13": {
+                "pk": 13,
+                "title": "Весенний рассвет",
+                "price": 650,
+                "budget_category": "~500",
+                "image": "static/images/bouquet13.jpg",
+                "occasion": "8 марта",
+                "meaning": "Нежные весенние цветы для самого нежного праздника",
+                "flowers": [2, 5],
+                "color_scheme": "розовый"
+            },
+            "14": {
+                "pk": 14,
+                "title": "Деловое настроение",
+                "price": 1200,
+                "budget_category": "~1000",
+                "image": "static/images/bouquet14.jpg",
+                "occasion": "1 сентября",
+                "meaning": "Строгий и элегантный букет для деловой атмосферы",
+                "flowers": [3, 8],
+                "color_scheme": "синий"
+            },
+            "15": {
+                "pk": 15,
+                "title": "Огненная страсть",
+                "price": 2800,
+                "budget_category": "~2000",
+                "image": "static/images/bouquet15.jpg",
+                "occasion": "14 февраля",
+                "meaning": "Пылающая страсть в каждом лепестке",
+                "flowers": [1, 7],
+                "color_scheme": "красный"
+            },
+            "16": {
+                "pk": 16,
+                "title": "Зимняя сказка",
+                "price": 480,
+                "budget_category": "больше",
+                "image": "static/images/bouquet16.jpg",
+                "occasion": "день рождения",
+                "meaning": "Волшебство зимней сказки в изящной композиции",
+                "flowers": [3, 6],
+                "color_scheme": "белый"
+            },
+            "17": {
+                "pk": 17,
+                "title": "Осенняя гармония",
+                "price": 950,
+                "budget_category": "~1000",
+                "image": "static/images/bouquet17.jpg",
+                "occasion": "без повода",
+                "meaning": "Теплые осенние краски для уютного настроения",
+                "flowers": [4, 7, 8],
+                "color_scheme": "желтый"
+            },
+            "18": {
+                "pk": 18,
+                "title": "Романтический вечер",
+                "price": 800,
+                "budget_category": "~2000",
+                "image": "static/images/bouquet18.jpg",
+                "occasion": "свадьба",
+                "meaning": "Идеальное дополнение к романтическому вечеру",
+                "flowers": [1, 2, 5],
+                "color_scheme": "розовый"
+            },
+            "19": {
+                "pk": 19,
+                "title": "Солнечный привет",
+                "price": 600,
+                "budget_category": "~500",
+                "image": "static/images/bouquet19.jpg",
+                "occasion": "другой повод",
+                "meaning": "Яркий букет, который подарит солнечное настроение",
+                "flowers": [4, 7],
+                "color_scheme": "фиолетовый"
+            },
+            "20": {
+                "pk": 20,
+                "title": "Элегантная простота",
+                "price": 1900,
+                "budget_category": "~2000",
+                "image": "static/images/bouquet20.jpg",
+                "occasion": "день рождения",
+                "meaning": "Простота и элегантность в каждой детали",
+                "flowers": [3, 8],
+                "color_scheme": "белый"
             }
         },
         "color_schemes.json": {
@@ -219,7 +329,7 @@ def create_test_json_files():
             "2": {
                 "pk": 2,
                 "tg_id": 987654321,
-                "full_name": "Мария Петрова",
+                "full_name": "Мария",
                 "role": 1,
                 "address": "пр. Ленина, д. 42",
                 "phone": "+79219876543"
@@ -227,7 +337,7 @@ def create_test_json_files():
             "3": {
                 "pk": 3,
                 "tg_id": 555555555,
-                "full_name": "Анна Флористова",
+                "full_name": "Анна",
                 "role": 2,
                 "address": "ул. Цветочная, д. 5",
                 "phone": "+79105555555"

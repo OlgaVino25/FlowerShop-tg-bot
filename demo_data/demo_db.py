@@ -18,9 +18,11 @@ from demo_data.utils import (
     delete_from_json,
 )
 from os import path
+from pathlib import Path
 
 
-JSON_DIRECTORY = "demo_data/json/"
+BASE_DIR = Path(__file__).parent
+JSON_DIRECTORY = BASE_DIR / "json"
 USERS = path.join(JSON_DIRECTORY, "users.json")
 ROLES = path.join(JSON_DIRECTORY, "roles.json")
 FLOWERS = path.join(JSON_DIRECTORY, "flowers.json")

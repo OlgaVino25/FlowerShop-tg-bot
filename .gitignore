@@ -73,6 +73,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+*.docx
 
 # PyBuilder
 target/
@@ -88,3 +89,7 @@ local_settings.py
 .env
 db.sqlite3
 media/
+
+### Custom ###
+test.py
+*.json
