@@ -329,12 +329,14 @@ def setup_order_handlers(bot, user_data):
             order_message = f"""✅ *Заказ оформлен!*
 
 Номер заказа: {order_data['pk']}
+Повод: {occasion}
 Букет: {bouquet.title}
 Цена: {bouquet.price} руб.
+Имя: {user_data[user_id].order_name}
+Телефон: {user_data[user_id].phone}
 Адрес: {user_data[user_id].order_address}
 Дата: {user_data[user_id].delivery_date}
-Время: {user_data[user_id].delivery_time}
-Повод: {occasion}"""
+Время: {user_data[user_id].delivery_time}"""
 
             # Добавляем комментарий, если он есть
             if user_data[user_id].comment:
