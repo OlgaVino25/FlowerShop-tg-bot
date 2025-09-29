@@ -320,6 +320,11 @@ def setup_order_handlers(bot, user_data):
                 if flower:
                     flowers_info.append(flower.title)
 
+            # Определяем повод для заказа
+            occasion = user_data[user_id].occasion
+            if hasattr(user_data[user_id], 'custom_occasion') and user_data[user_id].custom_occasion:
+                occasion = user_data[user_id].custom_occasion
+
             # Формируем сообщение с комментарием
             order_message = f"""✅ *Заказ оформлен!*
 
@@ -328,7 +333,8 @@ def setup_order_handlers(bot, user_data):
 Цена: {bouquet.price} руб.
 Адрес: {user_data[user_id].order_address}
 Дата: {user_data[user_id].delivery_date}
-Время: {user_data[user_id].delivery_time}"""
+Время: {user_data[user_id].delivery_time}
+Повод: {occasion}"""
 
             # Добавляем комментарий, если он есть
             if user_data[user_id].comment:
@@ -346,7 +352,8 @@ def setup_order_handlers(bot, user_data):
 *Телефон:* {user_data[user_id].phone}
 *Адрес:* {user_data[user_id].order_address}
 *Дата доставки:* {user_data[user_id].delivery_date}
-*Время доставки:* {user_data[user_id].delivery_time}"""
+*Время доставки:* {user_data[user_id].delivery_time}
+*Повод:* {occasion}"""
 
                 if user_data[user_id].comment:
                     courier_message += f"\n*Комментарий:* {user_data[user_id].comment}"
@@ -355,8 +362,7 @@ def setup_order_handlers(bot, user_data):
 
 *Букет:* {bouquet.title}
 *Цена:* {bouquet.price} руб.
-*Состав:* {', '.join(flowers_info)}
-*Повод:* {bouquet.occasion}"""
+*Состав:* {', '.join(flowers_info)}"""
 
                 bot.send_message(courier_chat_id, courier_message, parse_mode="Markdown")
             except Exception as e:

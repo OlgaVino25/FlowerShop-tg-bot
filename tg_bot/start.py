@@ -1,6 +1,6 @@
 from telebot import types
 from demo_data.demo_db import find_user, add_user, get_occasions
-from tg_bot.keyboards import create_occasion_keyboard
+from tg_bot.keyboards import create_occasion_keyboard, create_color_scheme_keyboard
 from tg_bot.states import UserState
 
 
@@ -56,8 +56,6 @@ def handle_custom_occasion(bot, message, user_data):
     user_data[user_id].color_scheme_set = False
     user_data[user_id].excluded_flowers = []
 
-    from tg_bot.keyboards import create_color_scheme_keyboard
-
     markup = create_color_scheme_keyboard()
 
     bot.send_message(
@@ -76,3 +74,10 @@ def setup_start_handlers(bot, user_data):
     @bot.message_handler(func=lambda message: message.text == "другой повод")
     def other_occasion_handler(message):
         handle_other_occasion(bot, message, user_data)
+
+    # Обработчик для ввода кастомного повода
+    @bot.message_handler(func=lambda message: 
+                      user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'waiting_custom_occasion', False))
+    def custom_occasion_input_handler(message):
+        handle_custom_occasion(bot, message, user_data)
