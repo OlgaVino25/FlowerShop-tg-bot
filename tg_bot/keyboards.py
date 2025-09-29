@@ -118,7 +118,7 @@ def create_bouquet_navigation(bouquet_index, bouquets_count, bouquet_pk):
 
     markup.row(
         types.InlineKeyboardButton(
-            "📞 Заказать консультацию", callback_data="consultation"
+            "📞 Заказать консультацию", callback_data="consultation"  # Убедитесь, что здесь "consultation"
         ),
         types.InlineKeyboardButton(
             "🌺 Посмотреть всю коллекцию", callback_data="all_collection"
