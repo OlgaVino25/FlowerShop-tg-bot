@@ -4,6 +4,7 @@ from typing import List
 
 @dataclass
 class UserState:
+    # Состояния для подбора букетов
     occasion: str = None
     budget: str = None
     color_scheme: str = None
@@ -11,23 +12,18 @@ class UserState:
     excluded_flowers: List[int] = field(default_factory=list)
     current_bouquet_index: int = 0
     filtered_bouquets: List = field(default_factory=list)
+    
+    # Состояния для заказа
+    order_state: str = None  # 'name', 'phone', 'address', 'date', 'time', 'comment'
+    order_bouquet_pk: int = None
+    order_name: str = None
     phone: str = None
     order_address: str = None
     delivery_date: str = None
     delivery_time: str = None
     comment: str = ""
-    waiting_custom_occasion: bool = False
+    
+    # Состояния для консультации
     consultation_mode: bool = False
-    order_bouquet_pk: int = None
+    waiting_custom_occasion: bool = False
     custom_occasion: str = None
-    order_name: str = None
-    waiting_order_name: bool = False
-    waiting_phone: bool = False
-    waiting_phone: bool = False
-    order_name: str = None
-    phone: str = None
-    order_address: str = None
-    delivery_date: str = None
-    delivery_time: str = None
-    comment: str = ""
-    order_bouquet_pk: int = None

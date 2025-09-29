@@ -1,14 +1,7 @@
 import os
 import sys
 import telebot
-from telebot import types
 from pathlib import Path
-from tg_bot.validators import (
-    validate_name,
-    validate_phone,
-    validate_address,
-    validate_delivery_date_and_time,
-)
 from dotenv import load_dotenv
 
 current_dir = Path(__file__).parent
@@ -40,21 +33,14 @@ def main():
         user_id = message.chat.id
 
         if user_id not in user_data:
-            from tg_bot.start import send_welcome
-            send_welcome(bot, message, user_data)
+            user_data[user_id] = UserState()
+
+        # Если есть активный заказ, пропускаем общую обработку
+        if hasattr(user_data[user_id], 'order_state') and user_data[user_id].order_state:
             return
 
-        # Если есть активный заказ и ждем имя
-        if getattr(user_data[user_id], "waiting_order_name", False):
-            from tg_bot.order import handle_order_name
-            handle_order_name(message)
-            return
-
-        # Если есть активный заказ и ждем телефон
-        if (getattr(user_data[user_id], "waiting_phone", False) and 
-            not getattr(user_data[user_id], "consultation_mode", False)):
-            from tg_bot.order import handle_manual_phone_input_message
-            handle_manual_phone_input_message(bot, message, user_data)
+        # Если есть активная консультация, пропускаем
+        if getattr(user_data[user_id], 'consultation_mode', False):
             return
 
         print(f"Необработанное сообщение: {message.text}")

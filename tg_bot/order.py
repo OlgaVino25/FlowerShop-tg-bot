@@ -12,20 +12,12 @@ from tg_bot.keyboards import (
     create_time_keyboard,
     create_comment_keyboard,
 )
-from tg_bot.filters import (
-    contact_filter,
-    address_filter,
-    date_filter,
-    time_filter,
-    comment_filter,
-)
 from tg_bot.validators import (
     validate_name,
     validate_phone,
     validate_address,
     validate_delivery_date_and_time,
 )
-import demo_data.demo_db as db
 
 
 def setup_order_handlers(bot, user_data):
@@ -35,14 +27,13 @@ def setup_order_handlers(bot, user_data):
         user_id = call.message.chat.id
         if user_id not in user_data:
             from tg_bot.start import send_welcome
-
             send_welcome(bot, call.message, user_data)
             return
 
         bouquet_pk = int(call.data.split("_")[1])
         user_data[user_id].order_bouquet_pk = bouquet_pk
+        user_data[user_id].order_state = 'name'
 
-        # Запрашиваем имя
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton("↩️ Назад к выбору"))
 
@@ -52,37 +43,29 @@ def setup_order_handlers(bot, user_data):
             reply_markup=markup,
             parse_mode="Markdown",
         )
-        user_data[user_id].waiting_order_name = True
         bot.answer_callback_query(call.id)
 
-    # Обработчик для имени с валидацией
-    @bot.message_handler(
-        func=lambda message: user_data.get(message.chat.id)
-        and getattr(user_data[message.chat.id], "waiting_order_name", False)
-    )
+    # Обработчик имени
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'name')
     def handle_order_name(message):
         user_id = message.chat.id
 
         if message.text == "↩️ Назад к выбору":
             from tg_bot.navigation import back_to_selection
-
             back_to_selection(message)
+            user_data[user_id].order_state = None
             return
 
-        # Валидация имени
         is_valid, error_msg = validate_name(message.text)
         if not is_valid:
             bot.send_message(message.chat.id, f"❌ {error_msg}")
             return
 
         user_data[user_id].order_name = message.text
-        user_data[user_id].waiting_order_name = False
-        user_data[user_id].waiting_phone = True
-
-        from tg_bot.keyboards import create_phone_keyboard
+        user_data[user_id].order_state = 'phone'
 
         markup = create_phone_keyboard()
-
         bot.send_message(
             message.chat.id,
             "📞 *Для оформления заказа нам нужен ваш номер телефона:*",
@@ -90,24 +73,21 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(
-        func=lambda message: contact_filter(message)
-        and user_data.get(message.chat.id)
-        and not getattr(user_data[message.chat.id], "consultation_mode", False)
-        and hasattr(user_data[message.chat.id], "order_name")
-    )
+    # Обработчик телефона через контакт
+    @bot.message_handler(content_types=['contact'], 
+                      func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'phone')
     def handle_order_contact(message):
         user_id = message.chat.id
         phone = message.contact.phone_number
 
-        # Валидация телефона
         is_valid, error_msg = validate_phone(phone)
         if not is_valid:
             bot.send_message(message.chat.id, f"❌ {error_msg}")
             return
 
         user_data[user_id].phone = phone
-        user_data[user_id].waiting_phone = False  # Добавьте эту строку
+        user_data[user_id].order_state = 'address'
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton("↩️ Назад"))
@@ -119,11 +99,12 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(func=lambda message: message.text == "📝 Ввести номер вручную")
-    def handle_manual_phone_input(message):
+    # Обработчик ручного ввода телефона
+    @bot.message_handler(func=lambda message: message.text == "📝 Ввести номер вручную" and
+                      user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'phone')
+    def handle_manual_phone_option(message):
         user_id = message.chat.id
-        if user_id not in user_data:
-            return
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton("↩️ Назад к выбору"))
@@ -135,10 +116,45 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(func=lambda message: address_filter(message, user_data))
+    # Обработчик ручного ввода номера
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'phone' and
+                      message.text not in ["📝 Ввести номер вручную", "↩️ Назад к выбору"])
+    def handle_manual_phone_input(message):
+        user_id = message.chat.id
+
+        if message.text == "↩️ Назад к выбору":
+            from tg_bot.navigation import back_to_selection
+            back_to_selection(message)
+            user_data[user_id].order_state = None
+            return
+
+        is_valid, error_msg = validate_phone(message.text)
+        if not is_valid:
+            bot.send_message(message.chat.id, f"❌ {error_msg}")
+            return
+
+        user_data[user_id].phone = message.text
+        user_data[user_id].order_state = 'address'
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        markup.add(types.KeyboardButton("↩️ Назад"))
+
+        bot.send_message(
+            message.chat.id,
+            "🏠 *Укажите адрес доставки:*\n\n_Пример: Красноярск, улица Мира, дом 10_",
+            reply_markup=markup,
+            parse_mode="Markdown",
+        )
+
+    # Обработчик адреса
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'address')
     def handle_address(message):
-        print(f"Обработка адреса: {message.text}")
+        user_id = message.chat.id
+        
         if message.text == "↩️ Назад":
+            user_data[user_id].order_state = 'phone'
             markup = create_phone_keyboard()
             bot.send_message(
                 message.chat.id,
@@ -146,9 +162,6 @@ def setup_order_handlers(bot, user_data):
                 reply_markup=markup,
                 parse_mode="Markdown",
             )
-            # Удаляем телефон чтобы вернуться к его вводу
-            if hasattr(user_data[message.chat.id], "phone"):
-                delattr(user_data[message.chat.id], "phone")
             return
 
         is_valid, error_msg = validate_address(message.text)
@@ -156,8 +169,8 @@ def setup_order_handlers(bot, user_data):
             bot.send_message(message.chat.id, f"❌ {error_msg}")
             return
 
-        user_id = message.chat.id
         user_data[user_id].order_address = message.text
+        user_data[user_id].order_state = 'date'
 
         markup = create_date_keyboard()
         bot.send_message(
@@ -167,9 +180,14 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(func=lambda message: date_filter(message, user_data))
+    # Обработчик даты
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'date')
     def handle_delivery_date(message):
+        user_id = message.chat.id
+
         if message.text == "↩️ Назад":
+            user_data[user_id].order_state = 'address'
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(types.KeyboardButton("↩️ Назад"))
             bot.send_message(
@@ -180,26 +198,40 @@ def setup_order_handlers(bot, user_data):
             )
             return
 
-        user_id = message.chat.id
-
-        if message.text == "Сегодня":
-            delivery_date = datetime.now().strftime("%Y-%m-%d")
-        elif message.text == "Завтра":
-            delivery_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-        else:
-            bot.send_message(
-                message.chat.id, "❌ Пожалуйста, выберите 'Сегодня' или 'Завтра'"
-            )
-            return
-
         now = datetime.now()
-        if now.hour >= 18 and message.text == "Сегодня":
-            bot.send_message(
-                message.chat.id, "❌ *Магазин работает до 18:00*", parse_mode="Markdown"
-            )
-            return
+        
+        # Проверяем время оформления заказа (текущее время)
+        if now.hour >= 18:
+            # Если после 18:00, доставка только на завтра
+            if message.text == "Сегодня":
+                bot.send_message(
+                    message.chat.id, 
+                    "❌ *Заказ оформлен после 18:00, доставка возможна только на следующий день.*", 
+                    parse_mode="Markdown"
+                )
+                return
+            elif message.text == "Завтра":
+                delivery_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+            else:
+                bot.send_message(
+                    message.chat.id, "❌ Пожалуйста, выберите 'Завтра'"
+                )
+                return
+        else:
+            # Если до 18:00, можно выбрать сегодня или завтра
+            if message.text == "Сегодня":
+                delivery_date = datetime.now().strftime("%Y-%m-%d")
+            elif message.text == "Завтра":
+                delivery_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+            else:
+                bot.send_message(
+                    message.chat.id, "❌ Пожалуйста, выберите 'Сегодня' или 'Завтра'"
+                )
+                return
 
         user_data[user_id].delivery_date = delivery_date
+        user_data[user_id].order_state = 'time'
+
         markup = create_time_keyboard()
         bot.send_message(
             message.chat.id,
@@ -208,9 +240,14 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(func=lambda message: time_filter(message, user_data))
+    # Обработчик времени
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'time')
     def handle_delivery_time(message):
+        user_id = message.chat.id
+
         if message.text == "↩️ Назад":
+            user_data[user_id].order_state = 'date'
             markup = create_date_keyboard()
             bot.send_message(
                 message.chat.id,
@@ -220,15 +257,16 @@ def setup_order_handlers(bot, user_data):
             )
             return
 
-        user_id = message.chat.id
         user_data[user_id].delivery_time = message.text
 
         is_valid, error_msg = validate_delivery_date_and_time(
-            user_data[user_id].delivery_date, message.text.split("-")[0] + ":00"
+            user_data[user_id].delivery_date, message.text
         )
         if not is_valid:
             bot.send_message(message.chat.id, f"❌ {error_msg}")
             return
+
+        user_data[user_id].order_state = 'comment'
 
         markup = create_comment_keyboard()
         bot.send_message(
@@ -238,9 +276,14 @@ def setup_order_handlers(bot, user_data):
             parse_mode="Markdown",
         )
 
-    @bot.message_handler(func=lambda message: comment_filter(message, user_data))
+    # Обработчик комментария
+    @bot.message_handler(func=lambda message: user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'order_state', None) == 'comment')
     def handle_comment(message):
+        user_id = message.chat.id
+
         if message.text == "↩️ Назад":
+            user_data[user_id].order_state = 'time'
             markup = create_time_keyboard()
             bot.send_message(
                 message.chat.id,
@@ -250,115 +293,101 @@ def setup_order_handlers(bot, user_data):
             )
             return
 
-        user_id = message.chat.id
-        user_data[user_id].comment = (
-            "" if message.text == "✅ Без комментария" else message.text
-        )
+        # Сохраняем комментарий независимо от выбора
+        if message.text == "✅ Без комментария":
+            user_data[user_id].comment = ""
+        else:
+            user_data[user_id].comment = message.text
 
-        # Получаем информацию о букете для уведомления
-        bouquet = get_bouquet(user_data[user_id].order_bouquet_pk)
-        flowers_info = []
-        for flower_id in bouquet.flowers:
-            flower = get_flower(flower_id)
-            if flower:
-                flowers_info.append(flower.title)
+        print(f"Сохранен комментарий: '{user_data[user_id].comment}'")  # Для отладки
 
-        order_data = add_order(
-            customer=user_id,
-            bouquet=user_data[user_id].order_bouquet_pk,
-            address=user_data[user_id].order_address,
-            delivery_date=user_data[user_id].delivery_date,
-            delivery_time=user_data[user_id].delivery_time,
-            comment=user_data[user_id].comment,
-        )
-
-        # Отправляем уведомление курьеру (фиксированный ID)
-        courier_chat_id = 666666666  # ID курьера из demo_data
+        # Сохраняем заказ
         try:
-            order_summary = f"""
-            🚀 *Новый заказ!*
-            
-            *Заказ №:* {order_data['pk']}
-            *Имя:* {user_data[user_id].order_name}
-            *Телефон:* {user_data[user_id].phone}
-            *Адрес:* {user_data[user_id].order_address}
-            *Дата доставки:* {user_data[user_id].delivery_date}
-            *Время доставки:* {user_data[user_id].delivery_time}
-            *Комментарий:* {user_data[user_id].comment}
-            
-            *Букет:* {bouquet.title}
-            *Цена:* {bouquet.price} руб.
-            *Состав:* {', '.join(flowers_info)}
-            *Повод:* {bouquet.occasion}
-            """
-            bot.send_message(courier_chat_id, order_summary, parse_mode="Markdown")
+            order_data = add_order(
+                customer=user_id,
+                bouquet=user_data[user_id].order_bouquet_pk,
+                address=user_data[user_id].order_address,
+                delivery_date=user_data[user_id].delivery_date,
+                delivery_time=user_data[user_id].delivery_time,
+                comment=user_data[user_id].comment,
+            )
+
+            # Получаем информацию о букете
+            bouquet = get_bouquet(user_data[user_id].order_bouquet_pk)
+            flowers_info = []
+            for flower_id in bouquet.flowers:
+                flower = get_flower(flower_id)
+                if flower:
+                    flowers_info.append(flower.title)
+
+            # Формируем сообщение с комментарием
+            order_message = f"""✅ *Заказ оформлен!*
+
+Номер заказа: {order_data['pk']}
+Букет: {bouquet.title}
+Цена: {bouquet.price} руб.
+Адрес: {user_data[user_id].order_address}
+Дата: {user_data[user_id].delivery_date}
+Время: {user_data[user_id].delivery_time}"""
+
+            # Добавляем комментарий, если он есть
+            if user_data[user_id].comment:
+                order_message += f"\nКомментарий: {user_data[user_id].comment}"
+
+            order_message += "\n\nКурьер уже уведомлен о заказе!"
+
+            # Уведомление курьеру
+            courier_chat_id = 666666666
+            try:
+                courier_message = f"""🚀 *Новый заказ!*
+
+*Заказ №:* {order_data['pk']}
+*Имя:* {user_data[user_id].order_name}
+*Телефон:* {user_data[user_id].phone}
+*Адрес:* {user_data[user_id].order_address}
+*Дата доставки:* {user_data[user_id].delivery_date}
+*Время доставки:* {user_data[user_id].delivery_time}"""
+
+                if user_data[user_id].comment:
+                    courier_message += f"\n*Комментарий:* {user_data[user_id].comment}"
+
+                courier_message += f"""
+
+*Букет:* {bouquet.title}
+*Цена:* {bouquet.price} руб.
+*Состав:* {', '.join(flowers_info)}
+*Повод:* {bouquet.occasion}"""
+
+                bot.send_message(courier_chat_id, courier_message, parse_mode="Markdown")
+            except Exception as e:
+                print(f"Ошибка отправки уведомления курьеру: {e}")
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(types.KeyboardButton("💐 Новый заказ"))
+
+            bot.send_message(
+                message.chat.id,
+                order_message,
+                reply_markup=markup,
+                parse_mode="Markdown",
+            )
+
         except Exception as e:
-            print(f"Ошибка отправки уведомления курьеру: {e}")
+            print(f"Ошибка при сохранении заказа: {e}")
+            bot.send_message(
+                message.chat.id,
+                "❌ *Произошла ошибка при оформлении заказа. Попробуйте позже.*",
+                parse_mode="Markdown",
+            )
 
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(types.KeyboardButton("💐 Новый заказ"))
-
-        bot.send_message(
-            message.chat.id,
-            f"✅ *Заказ оформлен!*\n\n"
-            f"Номер заказа: {order_data['pk']}\n"
-            f"Букет: {bouquet.title}\n"
-            f"Цена: {bouquet.price} руб.\n"
-            f"Адрес: {user_data[user_id].order_address}\n"
-            f"Дата: {user_data[user_id].delivery_date}\n"
-            f"Время: {user_data[user_id].delivery_time}\n\n"
-            f"Курьер уже уведомлен о заказе!",
-            reply_markup=markup,
-            parse_mode="Markdown",
-        )
-
-        # Очищаем данные заказа
-        order_attrs = [
-            "order_bouquet_pk",
-            "order_address",
-            "delivery_date",
-            "delivery_time",
-            "comment",
-            "order_name",
-            "phone",
-        ]
-        for attr in order_attrs:
+        # Очищаем состояние заказа
+        user_data[user_id].order_state = None
+        for attr in ['order_bouquet_pk', 'order_name', 'phone', 'order_address', 
+                    'delivery_date', 'delivery_time', 'comment']:
             if hasattr(user_data[user_id], attr):
                 delattr(user_data[user_id], attr)
 
     @bot.message_handler(func=lambda message: message.text == "💐 Новый заказ")
     def new_order(message):
         from tg_bot.start import send_welcome
-
         send_welcome(bot, message, user_data)
-
-
-def handle_manual_phone_input_message(bot, message, user_data):
-    user_id = message.chat.id
-
-    if message.text == "↩️ Назад к выбору":
-        from tg_bot.navigation import back_to_selection
-
-        back_to_selection(message)
-        return
-
-    print(f"Обработка ручного ввода телефона: {message.text}")
-
-    # Валидация телефона
-    is_valid, error_msg = validate_phone(message.text)
-    if not is_valid:
-        bot.send_message(message.chat.id, f"❌ {error_msg}")
-        return
-
-    user_data[user_id].phone = message.text
-    user_data[user_id].waiting_phone = False
-
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(types.KeyboardButton("↩️ Назад"))
-
-    bot.send_message(
-        message.chat.id,
-        "🏠 *Укажите адрес доставки:*\n\n_Пример: Красноярск, улица Мира, дом 10_",
-        reply_markup=markup,
-        parse_mode="Markdown",
-    )
