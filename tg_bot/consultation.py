@@ -93,10 +93,12 @@ def setup_consultation_handlers(bot, user_data):
         )
         user_data[user_id].consultation_mode = True
 
-    @bot.message_handler(func=lambda message: contact_filter(message) and 
-                      user_data.get(message.chat.id) and 
+    # Обработчик для контактов в режиме консультации
+    @bot.message_handler(content_types=['contact'], 
+                      func=lambda message: user_data.get(message.chat.id) and 
                       getattr(user_data[message.chat.id], "consultation_mode", False))
     def consultation_contact_handler(message):
+        print("Обработчик контакта для консультации вызван")  # Для отладки
         handle_consultation_contact(bot, message, user_data)
 
     # Обработчик для ручного ввода номера в режиме консультации

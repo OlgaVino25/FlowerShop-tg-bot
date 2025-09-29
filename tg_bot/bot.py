@@ -28,6 +28,16 @@ def main():
     setup_navigation_handlers(bot, user_data)
     setup_bouquet_handlers(bot, user_data)
 
+    @bot.message_handler(func=lambda message: 
+                      user_data.get(message.chat.id) and 
+                      getattr(user_data[message.chat.id], 'consultation_mode', False) and
+                      message.text == "↩️ Назад к выбору")
+    def back_from_consultation(message):
+        user_id = message.chat.id
+        user_data[user_id].consultation_mode = False
+        from tg_bot.start import send_welcome
+        send_welcome(bot, message, user_data)
+
     @bot.message_handler(func=lambda message: True)
     def handle_all_messages(message):
         user_id = message.chat.id
@@ -49,16 +59,6 @@ def main():
 
     print("Бот запущен...")
     bot.polling(none_stop=True)
-
-    @bot.message_handler(func=lambda message: 
-                      user_data.get(message.chat.id) and 
-                      getattr(user_data[message.chat.id], 'consultation_mode', False) and
-                      message.text == "↩️ Назад к выбору")
-    def back_from_consultation(message):
-        user_id = message.chat.id
-        user_data[user_id].consultation_mode = False
-        from tg_bot.start import send_welcome
-        send_welcome(bot, message, user_data)
 
 
 if __name__ == "__main__":
