@@ -1,6 +1,5 @@
 from telebot import types
 from demo_data.demo_db import get_occasions, get_color_schemes, get_flowers
-from tg_bot.validators import validate_name, validate_phone, validate_address, validate_delivery_date_and_time
 import demo_data.demo_db as db
 
 
@@ -118,7 +117,7 @@ def create_bouquet_navigation(bouquet_index, bouquets_count, bouquet_pk):
 
     markup.row(
         types.InlineKeyboardButton(
-            "📞 Заказать консультацию", callback_data="consultation"  # Убедитесь, что здесь "consultation"
+            "📞 Заказать консультацию", callback_data="consultation"
         ),
         types.InlineKeyboardButton(
             "🌺 Посмотреть всю коллекцию", callback_data="all_collection"

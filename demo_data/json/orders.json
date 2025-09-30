@@ -1,32 +1,32 @@
 {
-  "1": {
-    "pk": 1,
-    "customer": 2,
-    "bouquet": 1,
-    "address": "пр. Ленина, д. 42",
-    "delivery_date": "2024-07-15",
-    "delivery_time": "14:00",
-    "comment": "Позвонить за 15 минут до прибытия",
-    "status": "доставлен"
-  },
-  "2": {
-    "pk": 2,
-    "customer": 1,
-    "bouquet": 3,
-    "address": "ул. Пушкина, д. 10, кв. 25",
-    "delivery_date": "2024-07-16",
-    "delivery_time": "18:30",
-    "comment": "",
-    "status": "в обработке"
-  },
-  "3": {
-    "pk": 3,
-    "customer": 2,
-    "bouquet": 4,
-    "address": "пр. Ленина, д. 42",
-    "delivery_date": "2024-07-20",
-    "delivery_time": "12:00",
-    "comment": "Консультация с флористом: добавить больше зелени",
-    "status": "консультация"
-  }
+    "1": {
+        "pk": 1,
+        "customer": 2,
+        "bouquet": 1,
+        "address": "пр. Ленина, д. 42",
+        "delivery_date": "2024-07-15",
+        "delivery_time": "14:00",
+        "comment": "Позвонить за 15 минут до прибытия",
+        "status": "доставлен"
+    },
+    "2": {
+        "pk": 2,
+        "customer": 1,
+        "bouquet": 3,
+        "address": "ул. Пушкина, д. 10, кв. 25",
+        "delivery_date": "2024-07-16",
+        "delivery_time": "18:30",
+        "comment": "",
+        "status": "в обработке"
+    },
+    "3": {
+        "pk": 3,
+        "customer": 2,
+        "bouquet": 4,
+        "address": "пр. Ленина, д. 42",
+        "delivery_date": "2024-07-20",
+        "delivery_time": "12:00",
+        "comment": "Консультация с флористом: добавить больше зелени",
+        "status": "консультация"
+    }
 }
